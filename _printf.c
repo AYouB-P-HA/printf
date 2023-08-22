@@ -1,60 +1,58 @@
 #include "main.h"
 
 /**
- * _printf - Custom printf function
- * @format: Format string
- * @...: Variable arguments
- *
- * Return: Number of characters printed
- */
+ * _printf - prints strings characters and numbers
+ * @format: string to be printed
+ * Return: integer
+ **/
 int _printf(const char *format, ...)
 {
+	int i = 0, sum = 0, num;
+	char *str, ch;
 	va_list args;
-	int j;
-    va_start(args, format);
 
-	j = 0;
-    while (format[j])
+	if (format == NULL)
+		return (-1);
+
+	va_start(args, format);
+	while (format[i])
 	{
-		if (format[j] == '%')
+		if (format[i] != '%')
 		{
-			j++;
-			switch (format[j])
-			{
-			case 'd':
-			case 'i':
-				{
-					int x = va_arg(args, int);
-					printf("%d", x);
-					break;
-				}
-			case 'c':
-				{
-					int x = va_arg(args, int);
-					printf("%c", x);
-					break;
-				}
-			case 's':
-				{
-					char *x = va_arg(args, char *);
-					printf("%s", x);
-					break;
-				}
-			case '%':
-				putchar('%');
-				break;
-			default:
-				putchar(format[j]);
-				break;
-			}
+			putchar(format[i]);
+			sum++;
+		}
+		else if (format[i] == '%' && format[i + 1] == '%')
+		{
+			putchar('%');
+			sum++;
+			i++;
 		}
 		else
 		{
-			putchar(format[j]);
+			switch (format[i + 1])
+			{
+				case 'c':
+					ch = va_arg(args, int);
+					sum = printchar(ch, sum);
+					break;
+				case 's':
+					str = va_arg(args, char*);
+					sum = printstring(str, sum);
+					break;
+				case 'd':
+				case 'i':
+					num = va_arg(args, int);
+					sum = printinteger(num, sum);
+					break;
+				default:
+					putchar(format[i]);
+					break;
+			}
+			i++;
 		}
-		j++;
+		i++;
 	}
-
 	va_end(args);
-	return (j);
+	return (sum);
 }
